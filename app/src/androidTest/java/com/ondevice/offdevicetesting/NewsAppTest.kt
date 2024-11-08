@@ -2,6 +2,7 @@ package com.ondevice.offdevicetesting
 
 import android.util.Log
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -22,10 +23,7 @@ class NewsAppTest : BaseTestClass("kmp.news.app") {
     private fun fullNewsAppTest(iterations: Int): Pair<Boolean, String> {
         logToFile("Running full news app test")
         val executionTime = measureTimeMillis {
-            gestureScrollDown()
-            val specificViewResult = clickSpecificView(10)
-            if (!specificViewResult.first) return specificViewResult
-            device.pressBack()
+            newsGestureScrollDown()
             searchInNewsApp()
             goToHome()
         }
@@ -61,10 +59,8 @@ class NewsAppTest : BaseTestClass("kmp.news.app") {
         return try {
             val searchButton = device.findObject(UiSelector().text("Search"))
             searchButton.click()
-
             val searchField = device.findObject(UiSelector().text("Search"))
             searchField.click()
-
             fillEditText("London")
             clickSpecificView(7)
             device.pressBack()
@@ -127,4 +123,27 @@ class NewsAppTest : BaseTestClass("kmp.news.app") {
             Pair(false, "Failed to navigate to News page")
         }
     }
+
+    private fun newsGestureScrollDown(): Pair<Boolean, String> {
+        logToFile("Scrolling down on home")
+        return try {
+            // Navigate to the News tab
+            val newsTab = device.findObject(UiSelector().text("News"))
+            newsTab.click()
+            logToFile("Successfully navigated to News page")
+
+            // Perform a swipe gesture to scroll down
+            val startX = device.displayWidth / 2
+            val startY = (device.displayHeight * 0.8).toInt()
+            val endY = (device.displayHeight * 0.2).toInt()
+            device.swipe(startX, startY, startX, endY, 20)
+            logToFile("Successfully swiped down on News page")
+            Pair(true, "Successfully swiped down on News page")
+        } catch (e: Exception) {
+            logToFile("Failed to navigate or swipe on News page: ${e.message}")
+            Pair(false, "Failed to navigate or swipe on News page")
+        }
+    }
+
+
 }

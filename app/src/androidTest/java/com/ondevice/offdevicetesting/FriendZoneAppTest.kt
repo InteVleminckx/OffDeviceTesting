@@ -7,6 +7,10 @@ import androidx.test.uiautomator.UiSelector
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.text.SimpleDateFormat
+import java.util.Date
+import kotlin.math.sign
+import kotlin.random.Random
 import kotlin.system.measureTimeMillis
 
 @RunWith(AndroidJUnit4::class)
@@ -23,23 +27,48 @@ class FriendZoneAppTest : BaseTestClass("com.example.friendzone") {
     private fun fullFriendZoneAppTest(iterations: Int): Pair<Boolean, String> {
         logToFile("Running full FriendZone app test")
         val executionTime = measureTimeMillis {
-            //signIn()
-            clickToUser()
-            followUser()
-            likeUserLastPost()
-            writeACommentToUserPost()
-            device.pressBack()
-            device.pressBack()
+            signUp()
             goSearchPage()
             searchGrace()
             tapToResult()
-            gestureScrollDown()
-            device.pressBack()
             goToMessages()
             writeMessage()
         }
         logToFile("Finished the FriendZone App test in ${executionTime / 1000.0} seconds")
         return Pair(true, "Successfully executed the FriendZone app test.")
+    }
+
+    private fun signUp() {
+        clickObjectByText("Sign up")
+        val image = findObjectByClassAndInstance("android.view.View",2 )
+        image?.click()
+        clickObjectByText("Allow")
+        val thumbnailIcon = device.findObject(UiSelector().resourceId("com.google.android.documentsui:id/icon_thumb"))
+        thumbnailIcon.click()
+        val currentTime = SimpleDateFormat("HHmm").format(Date()) // Get time in "HHmm" format (e.g., "1620")
+        val mockEmail = "${currentTime}@test.com"
+        val mockFullName = "Test User ${Random.nextInt(100, 999)}"
+        val mockUsername = "user_${currentTime}_${Random.nextInt(10, 99)}"
+
+        // Set text to the full name field
+        val fullNameField = findObjectByClassAndInstance("android.widget.EditText", 0)
+        fullNameField?.setText(mockFullName)
+
+        // Assuming there are fields for username and email too
+        val usernameField = findObjectByClassAndInstance("android.widget.EditText", 1)
+        usernameField?.setText(mockUsername)
+
+        val bioField = findObjectByClassAndInstance("android.widget.EditText", 2)
+        bioField?.setText("I love cats <33")
+//        friendZoneGestureScrollDown()
+        val mailField = findObjectByClassAndInstance("android.widget.EditText", 3)
+        mailField?.setText(mockEmail)
+
+        val passwordField = findObjectByClassAndInstance("android.widget.EditText", 4)
+        passwordField?.setText("1234567890")
+
+        val signUpButton = findObjectByClassAndInstance("android.widget.Button", 0)
+        signUpButton?.click()
     }
 
     private fun signIn(): Pair<Boolean, String> {
@@ -56,75 +85,10 @@ class FriendZoneAppTest : BaseTestClass("com.example.friendzone") {
         }
     }
 
-    private fun clickToUser(): Pair<Boolean, String> {
-        logToFile("Navigating to user profile")
-        return try {
-            findObjectByClassAndInstance("android.view.View", 17)?.click()
-            logToFile("Successfully navigated to user profile")
-            Pair(true, "Successfully navigated to user profile")
-        } catch (e: Exception) {
-            logToFile("Failed to navigate to user profile: ${e.message}")
-            Pair(false, "Failed to navigate to user profile")
-        }
-    }
-
-    private fun followUser(): Pair<Boolean, String> {
-        logToFile("Attempting to follow user")
-        return try {
-            val followButton = device.findObject(UiSelector().className("android.widget.Button"))
-            followButton.click()
-            logToFile("Successfully followed the user")
-            Pair(true, "Successfully followed the user")
-        } catch (e: Exception) {
-            logToFile("Failed to follow user: ${e.message}")
-            Pair(false, "Failed to follow user")
-        }
-    }
-
-    private fun likeUserLastPost(): Pair<Boolean, String> {
-        logToFile("Liking user's last post")
-        return try {
-            findObjectByClassAndInstance("android.view.View", 6)?.click()
-            logToFile("Successfully liked user's last post")
-            Pair(true, "Successfully liked user's last post")
-        } catch (e: Exception) {
-            logToFile("Failed to like user's post: ${e.message}")
-            Pair(false, "Failed to like user's post")
-        }
-    }
-
-    private fun writeACommentToUserPost(): Pair<Boolean, String> {
-        logToFile("Writing a comment to user's post")
-        return try {
-            findObjectByClassAndInstance("android.view.View", 7)?.click()
-            writeAComment()
-            logToFile("Successfully wrote a comment")
-            Pair(true, "Successfully wrote a comment")
-        } catch (e: Exception) {
-            logToFile("Failed to write a comment: ${e.message}")
-            Pair(false, "Failed to write a comment")
-        }
-    }
-
-    private fun writeAComment(): Pair<Boolean, String> {
-        logToFile("Attempting to write a comment")
-        return try {
-            val commentField = findObjectByClassAndInstance("android.widget.EditText", 0)
-            commentField?.setText("Great post! Thanks for sharing.")
-            val sendButton = device.findObject(UiSelector().description("Send"))
-            sendButton?.click()
-            logToFile("Successfully wrote and posted a comment")
-            Pair(true, "Successfully wrote and posted a comment")
-        } catch (e: Exception) {
-            logToFile("Failed to write a comment: ${e.message}")
-            Pair(false, "Failed to write a comment")
-        }
-    }
-
     private fun goSearchPage(): Pair<Boolean, String> {
         logToFile("Navigating to search page")
         return try {
-            val searchBarButton = device.findObject(UiSelector().className("android.view.View").instance(33))
+            val searchBarButton = device.findObject(UiSelector().className("android.view.View").instance(21))
             searchBarButton.click()
             logToFile("Successfully navigated to search page")
             Pair(true, "Successfully navigated to search page")
@@ -138,7 +102,7 @@ class FriendZoneAppTest : BaseTestClass("com.example.friendzone") {
         logToFile("Searching for 'Grace'")
         return try {
             val searchField = device.findObject(UiSelector().className("android.widget.EditText"))
-            searchField.setText("Grace")
+            searchField.setText("grace")
             logToFile("Successfully entered 'Grace' in the search field")
             Pair(true, "Successfully entered 'Grace' in the search field")
         } catch (e: Exception) {
@@ -150,7 +114,9 @@ class FriendZoneAppTest : BaseTestClass("com.example.friendzone") {
     private fun tapToResult(): Pair<Boolean, String> {
         logToFile("Tapping on the search result for Grace Turner")
         return try {
-            clickObjectByText("Grace Turner")
+            val graceRow = findObjectByClassAndInstance("android.view.View", 5)
+            graceRow?.click()
+            device.pressBack()
             logToFile("Successfully tapped on the specified view")
             Pair(true, "Successfully tapped on the specified view")
         } catch (e: Exception) {
@@ -162,7 +128,7 @@ class FriendZoneAppTest : BaseTestClass("com.example.friendzone") {
     private fun goToMessages(): Pair<Boolean, String> {
         logToFile("Navigating to messages")
         return try {
-            findObjectByClassAndInstance("android.view.View", instance = 18)?.click()
+            findObjectByClassAndInstance("android.view.View", 18)?.click()
             logToFile("Successfully went to messages")
             Pair(true, "Successfully went to messages")
         } catch (e: Exception) {

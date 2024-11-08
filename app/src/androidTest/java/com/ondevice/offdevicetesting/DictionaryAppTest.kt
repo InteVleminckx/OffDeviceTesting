@@ -18,10 +18,12 @@ class DictionaryAppTest : BaseTestClass("com.ss.dictionaryapp") {
 
     @Test
     fun runDictionaryApp() {
-        logToFile("Starting Dictionary App Automation Test")
-        val result = executeTest(::fullDictionaryAppTest, 1, "Dictionary App Automation Test")
-        logToFile("Dictionary App Test Result: $result")
-        assertEquals("Successfully executed the dictionary app test.", result)
+        for (i in 0..29) {
+            logToFile("Starting Dictionary App Automation Test")
+            var result = executeTest(::fullDictionaryAppTest, 1, "Dictionary App Automation Test")
+            logToFile("Dictionary App Test Result: $result")
+            assertEquals("Successfully executed the dictionary app test.", result)
+        }
     }
 
     private fun fullDictionaryAppTest(iterations: Int): Pair<Boolean, String> {

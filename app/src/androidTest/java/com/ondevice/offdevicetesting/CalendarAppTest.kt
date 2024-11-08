@@ -12,10 +12,12 @@ class CalendarAppTest : BaseTestClass("com.sztorm.notecalendar") {
 
     @Test
     fun runCalendarAppTest() {
-        logToFile("Starting Calendar App Test")
-        val result = executeTest(::fullCalendarAppTest, 1, "Calendar App Automation Test")
-        logToFile("Calendar App Test Result: $result")
-        assertEquals("Successfully executed the Calendar app test.", result)
+        for (i in 0..29) {
+            logToFile("Starting Calendar App Test")
+            val result = executeTest(::fullCalendarAppTest, 1, "Calendar App Automation Test")
+            logToFile("Calendar App Test Result: $result")
+            assertEquals("Successfully executed the Calendar app test.", result)
+        }
     }
 
     private fun fullCalendarAppTest(iterations: Int): Pair<Boolean, String> {
@@ -33,9 +35,24 @@ class CalendarAppTest : BaseTestClass("com.sztorm.notecalendar") {
             changeTheme()
             turnOnNotificationsOnOff()
             changeCalendarSettings()
+            switchToToday()
         }
         logToFile("Calendar App test completed in ${executionTime / 1000.0} seconds")
         return Pair(true, "Successfully executed the Calendar app test.")
+    }
+
+
+    private fun switchToToday(): Pair<Boolean, String> {
+        logToFile("Switching between views to Today")
+        return try {
+            device.findObject(UiSelector().resourceId("com.sztorm.notecalendar:id/btnViewDay")).click()
+            logToFile("Successfully switched to today view.")
+            Pair(true, "Successfully switched to today view.")
+        } catch (e: Exception) {
+            e.printStackTrace()
+            logToFile("Failed to switch to today view: ${e.message}")
+            Pair(false, "Failed to switch to today view: ${e.message}")
+        }
     }
 
     private fun switchBetweenModsToToday(): Pair<Boolean, String> {
@@ -158,6 +175,7 @@ class CalendarAppTest : BaseTestClass("com.sztorm.notecalendar") {
         logToFile("Changing theme")
         return try {
             clickObjectByText("Set dark theme")
+            clickObjectByText("Set light theme")
             logToFile("Successfully changed theme")
             Pair(true, "Successfully changed theme")
         } catch (e: Exception) {
