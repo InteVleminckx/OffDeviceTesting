@@ -1,9 +1,8 @@
 package com.ondevice.offdevicetesting
 
-import android.util.Log
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
+import kotlinx.coroutines.delay
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -31,6 +30,38 @@ class NewsAppTest : BaseTestClass("kmp.news.app") {
         return Pair(true, "Successfully executed the news app test.")
     }
 
+
+    private fun checkSearchCompleted(): Pair<Boolean, String> {
+
+        logToFile("Check if the search has been completed")
+        repeat(10) { attempt ->
+            try {
+
+                logToFile("Sleep 1s")
+                Thread.sleep(1000)
+                // If it still searching, the 8th instance should be the navigation bar
+                val obj = findObjectByClassAndInstance("android.view.View", 7)
+                if (obj != null) {
+
+                    // Get the boundaries
+                    val bounds = obj.bounds
+
+                    if (bounds.top < 1400) {
+                        logToFile("Search successfully done")
+                        return Pair(true, "Successfully searched the keyword")
+                    }
+                }
+                logToFile("Search not done, retrying to conform that the search is successfully done")
+            } catch (e: Exception) {
+                logToFile("Attempt $attempt failed with exception: ${e.message}")
+                restartUiAutomationService()
+                Thread.sleep(5000)
+            }
+        }
+        logToFile("Failed to search the keyword after waiting for a particular delay")
+        return Pair(false, "Failed to search the keyword")
+    }
+
     private fun clickSpecificView(instanceNumber: Int): Pair<Boolean, String> {
         logToFile("Attempting to click specific view with instance number $instanceNumber")
         repeat(3) { attempt ->
@@ -40,7 +71,10 @@ class NewsAppTest : BaseTestClass("kmp.news.app") {
                 if (obj != null) {
                     obj.click()
                     logToFile("Successfully clicked on the specific instance of android.view.View")
-                    return Pair(true, "Successfully clicked on the specific instance of android.view.View")
+                    return Pair(
+                        true,
+                        "Successfully clicked on the specific instance of android.view.View"
+                    )
                 } else {
                     logToFile("Object found but not interactable. Retrying...")
                 }
@@ -51,7 +85,10 @@ class NewsAppTest : BaseTestClass("kmp.news.app") {
             }
         }
         logToFile("Failed to click on the specific instance of android.view.View after retries")
-        return Pair(false, "Failed to click on the specific instance of android.view.View after retries")
+        return Pair(
+            false,
+            "Failed to click on the specific instance of android.view.View after retries"
+        )
     }
 
     private fun searchInNewsApp(): Pair<Boolean, String> {
@@ -62,8 +99,10 @@ class NewsAppTest : BaseTestClass("kmp.news.app") {
             val searchField = device.findObject(UiSelector().text("Search"))
             searchField.click()
             fillEditText("London")
-            clickSpecificView(7)
+            checkSearchCompleted()
+            clickSpecificView(6)
             device.pressBack()
+            checkSearchCompleted()
             clickSpecificView(11)
             saveNewsArticle()
             logToFile("Successfully searched and clicked on news")
