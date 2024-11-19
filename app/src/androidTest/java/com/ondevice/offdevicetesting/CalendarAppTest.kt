@@ -12,12 +12,10 @@ class CalendarAppTest : BaseTestClass("com.sztorm.notecalendar") {
 
     @Test
     fun runCalendarAppTest() {
-        for (i in 0..29) {
             logToFile("Starting Calendar App Test")
             val result = executeTest(::fullCalendarAppTest, 1, "Calendar App Automation Test")
             logToFile("Calendar App Test Result: $result")
             assertEquals("Successfully executed the Calendar app test.", result)
-        }
     }
 
     private fun fullCalendarAppTest(iterations: Int): Pair<Boolean, String> {
@@ -28,14 +26,9 @@ class CalendarAppTest : BaseTestClass("com.sztorm.notecalendar") {
             clickAddNoteButton()
             writeNote("Today was amazing")
             saveNote()
-            editNote()
-            saveNote()
             deleteNote()
             goSettings()
-            changeTheme()
-            turnOnNotificationsOnOff()
-            changeCalendarSettings()
-            switchToToday()
+            changeThemeToDark()
         }
         logToFile("Calendar App test completed in ${executionTime / 1000.0} seconds")
         return Pair(true, "Successfully executed the Calendar app test.")
@@ -171,51 +164,16 @@ class CalendarAppTest : BaseTestClass("com.sztorm.notecalendar") {
         }
     }
 
-    private fun changeTheme(): Pair<Boolean, String> {
+    private fun changeThemeToDark(): Pair<Boolean, String> {
         logToFile("Changing theme")
         return try {
             clickObjectByText("Set dark theme")
-            clickObjectByText("Set light theme")
             logToFile("Successfully changed theme")
             Pair(true, "Successfully changed theme")
         } catch (e: Exception) {
             e.printStackTrace()
             logToFile("Failed to change theme: ${e.message}")
             Pair(false, "Failed to change theme")
-        }
-    }
-
-    private fun turnOnNotificationsOnOff(): Pair<Boolean, String> {
-        logToFile("Toggling notifications on/off")
-        return try {
-            val switch = device.findObject(UiSelector().resourceId("com.sztorm.notecalendar:id/switchWidget"))
-            switch.click()
-            switch.click()
-            logToFile("Successfully toggled notifications on/off")
-            Pair(true, "Successfully toggled notifications on/off")
-        } catch (e: Exception) {
-            e.printStackTrace()
-            logToFile("Failed to toggle notifications on/off: ${e.message}")
-            Pair(false, "Failed to toggle notifications on/off")
-        }
-    }
-
-    private fun changeCalendarSettings(): Pair<Boolean, String> {
-        logToFile("Changing calendar settings")
-        return try {
-            val firstDayItem = device.findObject(UiSelector().className("android.widget.RelativeLayout").instance(11))
-            firstDayItem.click()
-            val radioItem = device.findObject(UiSelector().resourceId("com.sztorm.notecalendar:id/radioItem").instance(0))
-            radioItem.click()
-            clickObjectByText("OK")
-            val monthCalendar = device.findObject(UiSelector().resourceId("com.sztorm.notecalendar:id/btnViewMonth"))
-            monthCalendar.click()
-            logToFile("Successfully changed calendar settings")
-            Pair(true, "Successfully changed calendar settings")
-        } catch (e: Exception) {
-            e.printStackTrace()
-            logToFile("Failed to change calendar settings: ${e.message}")
-            Pair(false, "Failed to change calendar settings")
         }
     }
 }

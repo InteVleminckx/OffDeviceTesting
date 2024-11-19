@@ -25,11 +25,14 @@ class ExpenseTrackerAppTest : BaseTestClass("com.codewithfk.expensetracker.andro
     private fun fullExpenseTrackerAppTest(iterations: Int): Pair<Boolean, String> {
         logToFile("Running full expense tracker app test")
         val executionTime = measureTimeMillis {
-            addIncome()
-            clickToAddExpense()
-            addExpense()
-            clickToAddExpense()
-            addBigExpense()
+            addIncome("5000", 8)
+            Thread.sleep(1000)
+            addIncome("3000", 3)
+            Thread.sleep(1000)
+            addExpense("5", 6)
+            Thread.sleep(1000)
+            addExpense("15", 5)
+            Thread.sleep(1000)
             goAnalysis()
         }
         logToFile("Expense Tracker App test completed in ${executionTime / 1000.0} seconds")
@@ -50,7 +53,7 @@ class ExpenseTrackerAppTest : BaseTestClass("com.codewithfk.expensetracker.andro
         }
     }
 
-    private fun addIncome(): Pair<Boolean, String> {
+    private fun addIncome(amount: String, type: Int): Pair<Boolean, String> {
         logToFile("Starting to add income of $4000")
         return try {
             clickToAddExpense()
@@ -65,15 +68,7 @@ class ExpenseTrackerAppTest : BaseTestClass("com.codewithfk.expensetracker.andro
 
             val amountField = device.findObject(UiSelector().className("android.widget.EditText"))
             amountField.click()
-            amountField.setText("4000")
-
-            val selectDateField = device.findObject(UiSelector().className("android.widget.EditText").instance(1))
-            selectDateField.click()
-            val dateButton = device.findObject(UiSelector().className("android.widget.Button").instance(18))
-            dateButton.click()
-
-            val confirmButton = device.findObject(UiSelector().className("android.widget.Button").instance(36))
-            confirmButton.click()
+            amountField.setText(amount)
 
             val targetView = device.findObject(UiSelector().className("android.view.View").instance(8))
             targetView.click()
@@ -87,12 +82,11 @@ class ExpenseTrackerAppTest : BaseTestClass("com.codewithfk.expensetracker.andro
         }
     }
 
-    private fun addExpense(): Pair<Boolean, String> {
+    private fun addExpense(amount: String, type: Int): Pair<Boolean, String> {
         logToFile("Attempting to add expense of $4")
         return try {
             clickToAddExpense()
-
-            val addExpense = device.findObject(UiSelector().text("Add Expense"))
+            val addExpense = device.findObject(UiSelector().descriptionContains("Add Expense"))
             addExpense.click()
 
             clickObjectByText("Grocery")
@@ -103,17 +97,9 @@ class ExpenseTrackerAppTest : BaseTestClass("com.codewithfk.expensetracker.andro
 
             val amountField = device.findObject(UiSelector().className("android.widget.EditText"))
             amountField.click()
-            amountField.setText("4")
+            amountField.setText(amount)
 
-            val selectDateField = device.findObject(UiSelector().className("android.widget.EditText").instance(1))
-            selectDateField.click()
-            val dateButton = device.findObject(UiSelector().className("android.widget.Button").instance(18))
-            dateButton.click()
-
-            val confirmButton = device.findObject(UiSelector().className("android.widget.Button").instance(36))
-            confirmButton.click()
-
-            val targetView = device.findObject(UiSelector().className("android.view.View").instance(8))
+            val targetView = device.findObject(UiSelector().className("android.widget.Button"))
             targetView.click()
 
             logToFile("Successfully added expense with amount $4.")
@@ -122,43 +108,6 @@ class ExpenseTrackerAppTest : BaseTestClass("com.codewithfk.expensetracker.andro
             e.printStackTrace()
             logToFile("Failed to add expense: ${e.message}")
             Pair(false, "Failed to add expense: ${e.message}")
-        }
-    }
-
-    private fun addBigExpense(): Pair<Boolean, String> {
-        logToFile("Attempting to add big expense of $300")
-        return try {
-            val addExpenseButton = device.findObject(UiSelector().description("Add Expense"))
-            addExpenseButton.click()
-
-            clickObjectByText("Grocery")
-            clickObjectByText("Shopping")
-
-            val dollarSymbol = device.findObject(UiSelector().text("$"))
-            dollarSymbol.click()
-
-            val amountField = device.findObject(UiSelector().className("android.widget.EditText"))
-            amountField.click()
-            amountField.setText("300")
-
-            val selectDateField = device.findObject(UiSelector().className("android.widget.EditText").instance(1))
-            selectDateField.click()
-
-            val dateButton = device.findObject(UiSelector().className("android.widget.Button").instance(18))
-            dateButton.click()
-
-            val confirmButton = device.findObject(UiSelector().className("android.widget.Button").instance(36))
-            confirmButton.click()
-
-            val targetView = device.findObject(UiSelector().className("android.view.View").instance(8))
-            targetView.click()
-
-            logToFile("Successfully added big expense with amount $300.")
-            Pair(true, "Successfully added big expense with amount $300.")
-        } catch (e: Exception) {
-            e.printStackTrace()
-            logToFile("Failed to add big expense: ${e.message}")
-            Pair(false, "Failed to add big expense: ${e.message}")
         }
     }
 

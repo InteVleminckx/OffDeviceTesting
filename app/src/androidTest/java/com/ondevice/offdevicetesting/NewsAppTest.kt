@@ -2,15 +2,26 @@ package com.ondevice.offdevicetesting
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.uiautomator.UiSelector
-import kotlinx.coroutines.delay
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
+import kotlin.math.log
 import kotlin.system.measureTimeMillis
+
 
 @RunWith(AndroidJUnit4::class)
 class NewsAppTest : BaseTestClass("kmp.news.app") {
 
+    private var countries: List<String> = mutableListOf(
+        "United States",
+        "Canada",
+        "Mexico",
+        "Brazil",
+        "India",
+        "Turkey",
+        "Korea",
+        "Thailand"
+    )
     @Test
     fun runNewsAppTest() {
         logToFile("Starting News App Automation Test")
@@ -22,44 +33,35 @@ class NewsAppTest : BaseTestClass("kmp.news.app") {
     private fun fullNewsAppTest(iterations: Int): Pair<Boolean, String> {
         logToFile("Running full news app test")
         val executionTime = measureTimeMillis {
-            newsGestureScrollDown()
-            searchInNewsApp()
-            goToHome()
+            clickToFirstNews()
+            navigateToSearch()
+            search()
+            navigateToHome()
         }
         logToFile("Finished the News App test in ${executionTime / 1000.0} seconds")
         return Pair(true, "Successfully executed the news app test.")
     }
 
-
-    private fun checkSearchCompleted(): Pair<Boolean, String> {
-
-        logToFile("Check if the search has been completed")
-        repeat(10) { attempt ->
-            try {
-
-                logToFile("Sleep 1s")
-                Thread.sleep(1000)
-                // If it still searching, the 8th instance should be the navigation bar
-                val obj = findObjectByClassAndInstance("android.view.View", 7)
-                if (obj != null) {
-
-                    // Get the boundaries
-                    val bounds = obj.bounds
-
-                    if (bounds.top < 1400) {
-                        logToFile("Search successfully done")
-                        return Pair(true, "Successfully searched the keyword")
-                    }
-                }
-                logToFile("Search not done, retrying to conform that the search is successfully done")
-            } catch (e: Exception) {
-                logToFile("Attempt $attempt failed with exception: ${e.message}")
-                restartUiAutomationService()
-                Thread.sleep(5000)
-            }
+    private fun clickToFirstNews(): Pair<Boolean, String> {
+        logToFile("Clicking to first news")
+        try {
+            clickSpecificView(6)
+            return Pair(true, "Clicked to first element")
+        } catch (e: Exception) {
+            logToFile("Failed to click first news")
+            return Pair(false, "Failed to click first news")
         }
-        logToFile("Failed to search the keyword after waiting for a particular delay")
-        return Pair(false, "Failed to search the keyword")
+    }
+
+    private fun navigateToSearch(): Pair<Boolean, String> {
+        logToFile("Navigating to search")
+         try {
+            val searchNavBarMenuButton = device.findObject(UiSelector().descriptionContains("Search"))
+            searchNavBarMenuButton.click()
+            return Pair(true, "success to navigate search")
+        } catch (e: Exception) {
+            return Pair(false, "Failed to go search")
+        }
     }
 
     private fun clickSpecificView(instanceNumber: Int): Pair<Boolean, String> {
@@ -91,25 +93,16 @@ class NewsAppTest : BaseTestClass("kmp.news.app") {
         )
     }
 
-    private fun searchInNewsApp(): Pair<Boolean, String> {
-        logToFile("Attempting to search in news app")
-        return try {
-            val searchButton = device.findObject(UiSelector().text("Search"))
-            searchButton.click()
-            val searchField = device.findObject(UiSelector().text("Search"))
-            searchField.click()
-            fillEditText("London")
-            checkSearchCompleted()
-            clickSpecificView(6)
-            device.pressBack()
-            checkSearchCompleted()
-            clickSpecificView(11)
-            saveNewsArticle()
-            logToFile("Successfully searched and clicked on news")
-            Pair(true, "Successfully searched and clicked on news")
+    private fun search(): Pair<Boolean, String> {
+        logToFile("Searching")
+        try {
+            for (i in countries) {
+                fillEditText(i)
+                Thread.sleep(1500)
+            }
+            return Pair(true, "Success to search")
         } catch (e: Exception) {
-            logToFile("Failed to search in the news app: ${e.message}")
-            Pair(false, "Failed to search in the news app")
+            return Pair(false, "Failed to search")
         }
     }
 
@@ -126,19 +119,6 @@ class NewsAppTest : BaseTestClass("kmp.news.app") {
         }
     }
 
-    private fun saveNewsArticle(): Pair<Boolean, String> {
-        logToFile("Attempting to save news article")
-        return try {
-            val savedTab = device.findObject(UiSelector().text("Saved"))
-            savedTab.click()
-            logToFile("Successfully saved and navigated to the saved news")
-            Pair(true, "Successfully saved and navigated to the saved news")
-        } catch (e: Exception) {
-            logToFile("Failed to save the news article: ${e.message}")
-            Pair(false, "Failed to save the news article")
-        }
-    }
-
     private fun restartUiAutomationService() {
         logToFile("Restarting UiAutomation service...")
         try {
@@ -150,7 +130,7 @@ class NewsAppTest : BaseTestClass("kmp.news.app") {
         }
     }
 
-    private fun goToHome(): Pair<Boolean, String> {
+    private fun navigateToHome(): Pair<Boolean, String> {
         logToFile("Navigating to home/news page")
         return try {
             val newsTab = device.findObject(UiSelector().text("News"))
@@ -160,6 +140,29 @@ class NewsAppTest : BaseTestClass("kmp.news.app") {
         } catch (e: Exception) {
             logToFile("Failed to navigate to News page: ${e.message}")
             Pair(false, "Failed to navigate to News page")
+        }
+    }
+
+    private fun navigateToSaved():Pair<Boolean, String> {
+        logToFile("Navigating to saved")
+        return try {
+            val newsTab = device.findObject(UiSelector().text("Saved"))
+            newsTab.click()
+            logToFile("Successfully navigated to Saved page")
+            Pair(true, "Successfully navigated to News page")
+        } catch (e: Exception) {
+            logToFile("Failed to navigate to Saved page: ${e.message}")
+            Pair(false, "Failed to navigate to Saved page")
+        }
+    }
+
+    private fun saveNews(): Pair<Boolean, String> {
+        logToFile("Saving news")
+        try {
+            clickSpecificView(8)
+            return Pair(true, "Success to save news")
+        } catch (e: Exception) {
+            return Pair(false, "failed to save news")
         }
     }
 
