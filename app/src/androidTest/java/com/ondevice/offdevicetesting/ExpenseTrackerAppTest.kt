@@ -16,10 +16,13 @@ class ExpenseTrackerAppTest : BaseTestClass("com.codewithfk.expensetracker.andro
 
     @Test
     fun runExpenseTracker() {
+
         logToFile("Starting Expense Tracker App Test")
-        val result = executeTest(::fullExpenseTrackerAppTest, 1, "Expense Tracker App Automation Test")
+        val result =
+            executeTest(::fullExpenseTrackerAppTest, 1, "Expense Tracker App Automation Test")
         logToFile("Expense Tracker Test Result: $result")
         assertEquals("Successfully executed the Expense Tracker app test.", result)
+
     }
 
     private fun fullExpenseTrackerAppTest(iterations: Int): Pair<Boolean, String> {
@@ -34,6 +37,8 @@ class ExpenseTrackerAppTest : BaseTestClass("com.codewithfk.expensetracker.andro
             addExpense("15", 5)
             Thread.sleep(1000)
             goAnalysis()
+            Thread.sleep(1000)
+            goHome()
         }
         logToFile("Expense Tracker App test completed in ${executionTime / 1000.0} seconds")
         return Pair(true, "Successfully executed the Expense Tracker app test.")
@@ -42,7 +47,8 @@ class ExpenseTrackerAppTest : BaseTestClass("com.codewithfk.expensetracker.andro
     private fun clickToAddExpense(): Pair<Boolean, String> {
         logToFile("Attempting to click 'Add Expense' button")
         return try {
-            val addExpenseButton = device.findObject(UiSelector().description("small floating action button"))
+            val addExpenseButton =
+                device.findObject(UiSelector().description("small floating action button"))
             addExpenseButton.click()
             logToFile("Successfully opened 'Add Expense' view.")
             Pair(true, "Successfully opened 'Add Expense' view.")
@@ -70,7 +76,8 @@ class ExpenseTrackerAppTest : BaseTestClass("com.codewithfk.expensetracker.andro
             amountField.click()
             amountField.setText(amount)
 
-            val targetView = device.findObject(UiSelector().className("android.view.View").instance(8))
+            val targetView =
+                device.findObject(UiSelector().className("android.view.View").instance(8))
             targetView.click()
 
             logToFile("Successfully added income with amount $4000.")
@@ -114,7 +121,8 @@ class ExpenseTrackerAppTest : BaseTestClass("com.codewithfk.expensetracker.andro
     private fun goAnalysis(): Pair<Boolean, String> {
         logToFile("Navigating to analysis")
         return try {
-            val analysisMenuBarButton = device.findObject(UiSelector().className("android.view.View").instance(10))
+            val analysisMenuBarButton =
+                device.findObject(UiSelector().className("android.view.View").instance(10))
             analysisMenuBarButton.click()
             logToFile("Successfully navigated to analysis.")
             Pair(true, "Successfully navigated to analysis.")
@@ -124,4 +132,21 @@ class ExpenseTrackerAppTest : BaseTestClass("com.codewithfk.expensetracker.andro
             Pair(false, "Failed to navigate to analysis: ${e.message}")
         }
     }
+
+
+    private fun goHome(): Pair<Boolean, String> {
+        logToFile("Navigating to home")
+        return try {
+            val homeMenuBarButton =
+                device.findObject(UiSelector().className("android.view.View").instance(7))
+            homeMenuBarButton.click()
+            logToFile("Successfully navigated to home.")
+            Pair(true, "Successfully navigated to home.")
+        } catch (e: Exception) {
+            e.printStackTrace()
+            logToFile("Failed to navigate to home: ${e.message}")
+            Pair(false, "Failed to navigate to home: ${e.message}")
+        }
+    }
+
 }

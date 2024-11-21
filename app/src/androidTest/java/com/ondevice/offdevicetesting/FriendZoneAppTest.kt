@@ -30,11 +30,17 @@ class FriendZoneAppTest : BaseTestClass("com.example.friendzone") {
         logToFile("Running full FriendZone app test")
         val executionTime = measureTimeMillis {
             navigateToSearch()
+            Thread.sleep(250)
             searchUser("Grace Turner")
+            Thread.sleep(250)
             clickToFirstSearchResult()
+            Thread.sleep(250)
             followUser()
+            Thread.sleep(250)
             goChats()
+            Thread.sleep(250)
             writeMessageToUser("Grace Turner")
+            Thread.sleep(250)
         }
         logToFile("Finished the FriendZone App test in ${executionTime / 1000.0} seconds")
         return Pair(true, "Successfully executed the FriendZone app test.")
@@ -46,10 +52,10 @@ class FriendZoneAppTest : BaseTestClass("com.example.friendzone") {
 
             val objects = device.findObjects(By.clazz("android.view.View")).sortedWith(
                 compareBy(
-                    {it.visibleBounds.top},
-                    {it.visibleBounds.left},
-                    {it.visibleBounds.bottom},
-                    {it.visibleBounds.right}
+                    { it.visibleBounds.top },
+                    { it.visibleBounds.left },
+                    { it.visibleBounds.bottom },
+                    { it.visibleBounds.right }
                 )
             )
             val searchButton = objects[objects.size - 6]
@@ -110,7 +116,6 @@ class FriendZoneAppTest : BaseTestClass("com.example.friendzone") {
     private fun goChats(): Pair<Boolean, String> {
         logToFile("Navigating to messages")
         return try {
-
             findObjectByClassAndInstance("android.view.View", 18)?.click()
             logToFile("Successfully went to messages")
             Pair(true, "Successfully went to messages")
@@ -134,29 +139,27 @@ class FriendZoneAppTest : BaseTestClass("com.example.friendzone") {
             var userInstance = device.findObjects(By.clazz("android.view.View"))
             var found = false
             while (!found) {
-
                 for (view in userInstance) {
                     for (child in view.children) {
                         if (child.className == "android.widget.TextView" && child.text == userName) {
                             found = true
                             view.click()
 
-                            val messageField = device.findObject(UiSelector().className("android.widget.EditText"))
+                            val messageField =
+                                device.findObject(UiSelector().className("android.widget.EditText"))
                             messageField.setText("Hi there!")
 
                             val sendButton = device.findObject(UiSelector().description("Send"))
                             sendButton.click()
 
-                            val objects = device.findObjects(By.clazz("android.view.View")).sortedWith(
-                                compareBy(
-                                    {it.visibleBounds.top},
-                                    {it.visibleBounds.left},
-                                    {it.visibleBounds.bottom},
-                                    {it.visibleBounds.right}
+                            val objects =
+                                device.findObjects(By.clazz("android.view.View")).sortedWith(
+                                    compareBy(
+                                        { it.visibleBounds.top },
+                                        { it.visibleBounds.left },
+                                    )
                                 )
-                            )
                             objects[4].click()
-
                         }
                     }
                 }

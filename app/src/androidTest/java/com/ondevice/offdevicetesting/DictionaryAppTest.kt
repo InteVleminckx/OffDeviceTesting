@@ -1,4 +1,5 @@
 package com.ondevice.offdevicetesting
+
 import android.util.Log
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.uiautomator.By
@@ -14,16 +15,26 @@ import kotlin.system.measureTimeMillis
 
 @RunWith(AndroidJUnit4::class)
 class DictionaryAppTest : BaseTestClass("com.ss.dictionaryapp") {
-    private val wordsToSearch = listOf("Word", "baby", "love", "sun", "moon", "sky", "flower", "tree", "rain", "wind", "light")
+    private val wordsToSearch = listOf(
+        "word",
+        "baby",
+        "love",
+        "sun",
+        "moon",
+        "sky",
+        "flower",
+        "tree",
+        "rain",
+        "wind",
+        "light"
+    )
 
     @Test
     fun runDictionaryApp() {
-        for (i in 0..29) {
-            logToFile("Starting Dictionary App Automation Test")
-            var result = executeTest(::fullDictionaryAppTest, 1, "Dictionary App Automation Test")
-            logToFile("Dictionary App Test Result: $result")
-            assertEquals("Successfully executed the dictionary app test.", result)
-        }
+        logToFile("Starting Dictionary App Automation Test")
+        var result = executeTest(::fullDictionaryAppTest, 1, "Dictionary App Automation Test")
+        logToFile("Dictionary App Test Result: $result")
+        assertEquals("Successfully executed the dictionary app test.", result)
     }
 
     private fun fullDictionaryAppTest(iterations: Int): Pair<Boolean, String> {

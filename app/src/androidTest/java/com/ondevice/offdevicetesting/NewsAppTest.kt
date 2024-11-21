@@ -22,6 +22,7 @@ class NewsAppTest : BaseTestClass("kmp.news.app") {
         "Korea",
         "Thailand"
     )
+
     @Test
     fun runNewsAppTest() {
         logToFile("Starting News App Automation Test")
@@ -55,8 +56,9 @@ class NewsAppTest : BaseTestClass("kmp.news.app") {
 
     private fun navigateToSearch(): Pair<Boolean, String> {
         logToFile("Navigating to search")
-         try {
-            val searchNavBarMenuButton = device.findObject(UiSelector().descriptionContains("Search"))
+        try {
+            val searchNavBarMenuButton =
+                device.findObject(UiSelector().descriptionContains("Search"))
             searchNavBarMenuButton.click()
             return Pair(true, "success to navigate search")
         } catch (e: Exception) {
@@ -143,7 +145,7 @@ class NewsAppTest : BaseTestClass("kmp.news.app") {
         }
     }
 
-    private fun navigateToSaved():Pair<Boolean, String> {
+    private fun navigateToSaved(): Pair<Boolean, String> {
         logToFile("Navigating to saved")
         return try {
             val newsTab = device.findObject(UiSelector().text("Saved"))

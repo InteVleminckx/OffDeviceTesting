@@ -12,10 +12,10 @@ class CalendarAppTest : BaseTestClass("com.sztorm.notecalendar") {
 
     @Test
     fun runCalendarAppTest() {
-            logToFile("Starting Calendar App Test")
-            val result = executeTest(::fullCalendarAppTest, 1, "Calendar App Automation Test")
-            logToFile("Calendar App Test Result: $result")
-            assertEquals("Successfully executed the Calendar app test.", result)
+        logToFile("Starting Calendar App Test")
+        val result = executeTest(::fullCalendarAppTest, 1, "Calendar App Automation Test")
+        logToFile("Calendar App Test Result: $result")
+        assertEquals("Successfully executed the Calendar app test.", result)
     }
 
     private fun fullCalendarAppTest(iterations: Int): Pair<Boolean, String> {
@@ -38,7 +38,8 @@ class CalendarAppTest : BaseTestClass("com.sztorm.notecalendar") {
     private fun switchToToday(): Pair<Boolean, String> {
         logToFile("Switching between views to Today")
         return try {
-            device.findObject(UiSelector().resourceId("com.sztorm.notecalendar:id/btnViewDay")).click()
+            device.findObject(UiSelector().resourceId("com.sztorm.notecalendar:id/btnViewDay"))
+                .click()
             logToFile("Successfully switched to today view.")
             Pair(true, "Successfully switched to today view.")
         } catch (e: Exception) {
@@ -51,9 +52,12 @@ class CalendarAppTest : BaseTestClass("com.sztorm.notecalendar") {
     private fun switchBetweenModsToToday(): Pair<Boolean, String> {
         logToFile("Switching between views to Today")
         return try {
-            device.findObject(UiSelector().resourceId("com.sztorm.notecalendar:id/btnViewWeek")).click()
-            device.findObject(UiSelector().resourceId("com.sztorm.notecalendar:id/btnViewDay")).click()
-            device.findObject(UiSelector().resourceId("com.sztorm.notecalendar:id/btnViewMonth")).click()
+            device.findObject(UiSelector().resourceId("com.sztorm.notecalendar:id/btnViewWeek"))
+                .click()
+            device.findObject(UiSelector().resourceId("com.sztorm.notecalendar:id/btnViewDay"))
+                .click()
+            device.findObject(UiSelector().resourceId("com.sztorm.notecalendar:id/btnViewMonth"))
+                .click()
             logToFile("Successfully switched between views.")
             Pair(true, "Successfully switched between views.")
         } catch (e: Exception) {
@@ -66,7 +70,8 @@ class CalendarAppTest : BaseTestClass("com.sztorm.notecalendar") {
     private fun clickAddNoteButton(): Pair<Boolean, String> {
         logToFile("Clicking add note button")
         return try {
-            device.findObject(UiSelector().resourceId("com.sztorm.notecalendar:id/btnNoteAdd")).click()
+            device.findObject(UiSelector().resourceId("com.sztorm.notecalendar:id/btnNoteAdd"))
+                .click()
             logToFile("Successfully clicked to add note button")
             Pair(true, "Successfully clicked to add note button")
         } catch (e: Exception) {
@@ -79,7 +84,8 @@ class CalendarAppTest : BaseTestClass("com.sztorm.notecalendar") {
     private fun writeNote(text: String): Pair<Boolean, String> {
         logToFile("Writing note: $text")
         return try {
-            val noteField = device.findObject(UiSelector().resourceId("com.sztorm.notecalendar:id/txtNoteAdd"))
+            val noteField =
+                device.findObject(UiSelector().resourceId("com.sztorm.notecalendar:id/txtNoteAdd"))
             noteField.setText(text)
             logToFile("Successfully wrote a note")
             Pair(true, "Successfully wrote a note")
@@ -93,7 +99,8 @@ class CalendarAppTest : BaseTestClass("com.sztorm.notecalendar") {
     private fun saveNote(): Pair<Boolean, String> {
         logToFile("Saving note")
         return try {
-            val saveButton = device.findObject(UiSelector().resourceId("com.sztorm.notecalendar:id/btnNoteSave"))
+            val saveButton =
+                device.findObject(UiSelector().resourceId("com.sztorm.notecalendar:id/btnNoteSave"))
             saveButton.click()
             logToFile("Successfully saved note")
             Pair(true, "Successfully saved note")
@@ -107,11 +114,14 @@ class CalendarAppTest : BaseTestClass("com.sztorm.notecalendar") {
     private fun editNote(): Pair<Boolean, String> {
         logToFile("Editing note")
         return try {
-            val editButton = device.findObject(UiSelector().resourceId("com.sztorm.notecalendar:id/btnNoteEditText"))
+            val editButton =
+                device.findObject(UiSelector().resourceId("com.sztorm.notecalendar:id/btnNoteEditText"))
             editButton.click()
-            val noteField = device.findObject(UiSelector().resourceId("com.sztorm.notecalendar:id/txtNoteEdit"))
+            val noteField =
+                device.findObject(UiSelector().resourceId("com.sztorm.notecalendar:id/txtNoteEdit"))
             noteField.setText("Note changed successfully")
-            val saveChangedButton = device.findObject(UiSelector().resourceId("com.sztorm.notecalendar:id/btnNoteEditSave"))
+            val saveChangedButton =
+                device.findObject(UiSelector().resourceId("com.sztorm.notecalendar:id/btnNoteEditSave"))
             saveChangedButton.click()
             logToFile("Successfully edited and saved note")
             Pair(true, "Successfully edited and saved note")
@@ -125,7 +135,8 @@ class CalendarAppTest : BaseTestClass("com.sztorm.notecalendar") {
     private fun deleteNote(): Pair<Boolean, String> {
         logToFile("Deleting note")
         return try {
-            val deleteButton = device.findObject(UiSelector().resourceId("com.sztorm.notecalendar:id/btnNoteDeleteText"))
+            val deleteButton =
+                device.findObject(UiSelector().resourceId("com.sztorm.notecalendar:id/btnNoteDeleteText"))
             deleteButton.click()
             logToFile("Successfully deleted note")
             Pair(true, "Successfully deleted note")
@@ -139,7 +150,8 @@ class CalendarAppTest : BaseTestClass("com.sztorm.notecalendar") {
     private fun goSettings(): Pair<Boolean, String> {
         logToFile("Navigating to settings")
         return try {
-            val settingsButton = device.findObject(UiSelector().resourceId("com.sztorm.notecalendar:id/btnViewSettings"))
+            val settingsButton =
+                device.findObject(UiSelector().resourceId("com.sztorm.notecalendar:id/btnViewSettings"))
             settingsButton.click()
             Thread.sleep(5000)
             logToFile("Successfully navigated to settings")
